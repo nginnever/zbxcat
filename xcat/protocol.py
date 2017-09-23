@@ -9,6 +9,7 @@ from xcat.xcatconf import *
 from xcat.bitcoinRPC import bitcoinProxy
 from xcat.zcashRPC import zcashProxy
 import logging
+import json
 
 bitcoinRPC = bitcoinProxy()
 zcashRPC = zcashProxy()
@@ -179,9 +180,16 @@ def initialize_trade(tradeid, **kwargs):
         amounts = userInput.get_trade_amounts()
         print("AMOUNTS", amounts)
     else:
-        init_addrs = ADDRS[conf]['initiator']
-        fulfill_addrs = ADDRS[conf]['fulfiller']
-        amounts = ADDRS[conf]['amounts']
+        print("Conf in init trade", conf)
+        if conf == 'testnet' or conf == 'regtest':
+            # If json is not passed on cli, use ADDR obj from xcatconf.py
+            conf = ADDRS[conf]
+        else:
+            # Allow for passing in multiple trades at a time
+            conf = json.loads(conf)[0]
+        init_addrs = conf['initiator']
+        fulfill_addrs = conf['fulfiller']
+        amounts = conf['amounts']
 
     sell = amounts['sell']
     buy = amounts['buy']

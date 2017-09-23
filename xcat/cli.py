@@ -175,7 +175,7 @@ def checktrade(tradeid):
 def newtrade(tradeid, **kwargs):
     print("Creating new XCAT trade...")
     erase_trade()
-    tradeid, trade= initialize_trade(tradeid, conf=kwargs['conf'], network=kwargs['network'])
+    tradeid, trade = initialize_trade(tradeid, conf=kwargs['conf'], network=kwargs['network'])
     print("New trade created: {0}".format(trade))
     trade = seller_init(tradeid, trade, network=kwargs['network'])
     print("\nUse 'xcat exporttrade [tradeid]' to export the trade and sent to the buyer.\n")
@@ -203,10 +203,11 @@ def main():
     parser.add_argument("arguments", action="store", nargs="*", help="add arguments")
     parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode. Defaults to false")
     parser.add_argument("-w", "--wormhole", action="store_true", help="Transfer trade data through magic-wormhole")
-    parser.add_argument("-c", "--conf", action="store", help="Use default trade data in conf file.")
+    parser.add_argument("-c", "--conf", action="store", help="Use trade data in conf file ('testnet' or 'regtest'), or pass trade data in on cli as json.")
     parser.add_argument("-n", "--network", action="store", help="Set network to regtest or mainnet. Defaults to testnet while in alpha.")
     # parser.add_argument("--daemon", "-d", action="store_true", help="Run as daemon process")
     args = parser.parse_args()
+    print(args)
 
     if args.debug:
         numeric_level = getattr(logging, 'DEBUG', None)
@@ -247,10 +248,14 @@ def main():
     elif command == 'newtrade':
         if len(args.arguments) < 1: throw("Usage: newtrade [tradeid]")
         tradeid = args.arguments[0]
+        print("Conf", args.conf)
         if args.conf == None:
-            newtrade(tradeid, network=NETWORK, conf='cli')
+            conf = 'cli'
+            print("Conf is none")
         else:
-            newtrade(tradeid, network=NETWORK, conf=args.conf)
+            print("CONF: ", args.conf)
+            conf = args.conf
+        newtrade(tradeid, network=NETWORK, conf=conf)
     elif command == "daemon":
         #TODO: not implemented
         print("Run as daemon process")
@@ -262,10 +267,10 @@ def main():
         tradeid = args.arguments[0]
         checkBuyStatus(tradeid)
     elif command == "step3":
-        # generate(31)
+        generate(31)
         tradeid = args.arguments[0]
         checkSellStatus(tradeid)
     elif command == "step4":
-        # generate(1)
+        generate(1)
         tradeid = args.arguments[0]
         checkBuyStatus(tradeid)
