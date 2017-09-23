@@ -161,7 +161,6 @@ def create_buy_p2sh(trade, commitment, locktime):
 ####  Main functions related to user flow from command line
 def seller_redeem_p2sh(trade, secret):
     buy = trade.buy
-    userInput.authorize_seller_redeem(buy)
     if trade.sell.get_status() == 'redeemed':
         print("You already redeemed the funds and acquired {0} {1}".format(buy.amount, buy.currency))
         exit()
